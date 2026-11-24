@@ -481,6 +481,44 @@ body{counter-reset:sec}
 .pkeys{display:flex;gap:6px;margin:0 0 12px}
 @media(max-width:600px){.fnote{width:150px;min-height:96px;font-size:14px;padding:12px 12px 16px}.pl iframe{height:352px}}
 @media(prefers-reduced-motion:reduce){.gl::before,.gl::after{animation:none}}
+
+/* ---------- phones: same page, re-laid out ---------- */
+.swipehint{display:none;margin:2px 0 0;font:13px "Share Tech Mono",monospace;color:var(--soft)}
+@media(max-width:600px){
+.namerow{flex-direction:column;align-items:flex-start;gap:14px}
+#avatar .avatar{height:min(64vw,250px)}
+.collage{height:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 14px;align-items:start;margin-top:26px}
+.collage>.fall{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto!important}
+.collage .print img,.collage .print svg{max-height:240px;object-fit:cover;width:100%}
+.c-p2{margin-top:30px}
+.c-np{grid-column:1/-1}
+.c-hr{grid-column:1/-1;justify-self:start}
+.pics{display:flex;columns:auto;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;max-width:none;margin:28px calc(-1 * max(5vw,16px)) 0;padding:8px max(5vw,16px) 18px;scroll-padding:0 max(5vw,16px);scrollbar-width:none}
+.pics::-webkit-scrollbar{display:none}
+.pics .print{flex:0 0 auto;width:min-content;margin:0;scroll-snap-align:center}
+.pics .print img{height:min(56vh,380px);width:auto;max-width:80vw;object-fit:cover}
+.pics .print svg{width:72vw}
+.pics .print p{min-width:100%}
+.swipehint{display:block}
+.wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sticky{min-height:118px;font-size:15px;line-height:1.4;padding:14px 12px 18px}
+.sticky::before{margin-bottom:10px}
+.vinyl{width:min(66vw,250px)}
+.story{grid-template-columns:64px minmax(0,1fr);gap:10px 14px}
+.story>span:last-child{display:contents}
+.story h4{grid-column:2;align-self:center;margin:0}
+.story .sblurb,.story .read{grid-column:1/-1}
+.pl iframe{height:352px}
+#grav{min-height:40px;padding:8px 12px;font-size:12px}
+.scover{font-size:9px;padding:6px;overflow:hidden;overflow-wrap:anywhere}
+.links{flex-wrap:nowrap;overflow-x:auto;gap:4px 18px;max-width:100%;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.links::-webkit-scrollbar{display:none}
+.links a{flex:none}
+.pp-rail{align-items:stretch}
+.pp-hero{min-height:min(560px,80vh)}
+.pp-heroimg{height:56%}
+.pp-img{min-height:0;aspect-ratio:4/5}
+}
 </style>
 <!--/H-->
 </head>
@@ -1215,7 +1253,7 @@ const handStack = f => f === "Queenie Hand" ? `"Queenie Hand","Zeyada","Segoe Sc
 loadFont(HAND === "Queenie Hand" ? "Zeyada" : HAND);
 try { document.documentElement.style.setProperty("--hand", handStack(HAND)); } catch (err) {}
 const pics = [["#9fd3ff","#dfeaf5","#fffbe8","#7fa6d6","#2e4a7a","after the rain"],["#1e2a4a","#d9824a","#ffd27a","#3c4a6e","#141a30","last train home"],["#ffe7a3","#ffb38a","#fff","#e98a6c","#6a2e22","school, but make it art"]];
-if ((ME.gallery || []).length) { $("#pics").innerHTML = ME.gallery.map((p, i) => `<figure class="print fall" style="--r:${[-2, 1.5, -1, 1, -1.5, 2][i % 6]}deg"><img src="${esc(p.src)}" alt="${esc(p.caption || "a photo by Queenie")}"><p>${esc(p.caption || "")}</p></figure>`).join(""); $("#picsNote").hidden = true; }
+if ((ME.gallery || []).length) { $("#pics").innerHTML = ME.gallery.map((p, i) => `<figure class="print fall" style="--r:${[-2, 1.5, -1, 1, -1.5, 2][i % 6]}deg"><img src="${esc(p.src)}" alt="${esc(p.caption || "a photo by Queenie")}"><p>${esc(p.caption || "")}</p></figure>`).join(""); $("#picsNote").hidden = true; if (ME.gallery.length > 1) $("#pics").insertAdjacentHTML("afterend", `<p class="swipehint">swipe for more &rarr;</p>`); }
 else $("#pics").innerHTML = pics.map((p, i) => `<figure class="print fall" style="--r:${[-2,1.5,-1][i]}deg">${scene(...p.slice(0,5))}<p>${p[5]}</p></figure>`).join("");
 
 /* ---------- hero + player card ---------- */
@@ -1263,7 +1301,7 @@ $("#calm").insertAdjacentHTML("beforebegin", (ME.triggers || []).map(t => `<butt
 $("#trig").addEventListener("click", e => { const b = e.target.closest("[data-b]"); if (b) spike(+b.dataset.b, b.dataset.m); });
 $("#calm").addEventListener("click", () => { target = 64; bpm = Math.min(bpm, 96); toast("chocolate administered. vitals stabilising."); });
 const nm = $("#name"), nmCol = nm.parentElement.parentElement;
-const fitName = () => { nm.style.fontSize = ""; const av = $("#avatar .avatar"), fs0 = parseFloat(getComputedStyle(nm).fontSize); if (av) av.parentElement.style.setProperty("--ph", Math.round(fs0 * .88) + "px"); const gap = av ? av.offsetWidth + 20 : 0, w = nm.scrollWidth, cw = nmCol.clientWidth - gap; if (cw <= 0) return; if (w > cw) nm.style.fontSize = Math.floor(parseFloat(getComputedStyle(nm).fontSize) * cw / w * .97) + "px"; if (av && nm.style.fontSize) av.parentElement.style.setProperty("--ph", Math.round(parseFloat(nm.style.fontSize) * .88) + "px"); };
+const fitName = () => { nm.style.fontSize = ""; const av = $("#avatar .avatar"), fs0 = parseFloat(getComputedStyle(nm).fontSize); if (av) av.parentElement.style.setProperty("--ph", Math.round(fs0 * .88) + "px"); const gap = av && getComputedStyle(nm.parentElement).flexDirection !== "column" ? av.offsetWidth + 20 : 0, w = nm.scrollWidth, cw = nmCol.clientWidth - gap; if (cw <= 0) return; if (w > cw) nm.style.fontSize = Math.floor(parseFloat(getComputedStyle(nm).fontSize) * cw / w * .97) + "px"; if (av && nm.style.fontSize) av.parentElement.style.setProperty("--ph", Math.round(parseFloat(nm.style.fontSize) * .88) + "px"); };
 let nmW = -1;
 const roN = new ResizeObserver(en => { const w = Math.round(en[0].contentRect.width); if (w === nmW) return; nmW = w; requestAnimationFrame(fitName); }); roN.observe(nmCol);
 if (document.fonts) document.fonts.ready.then(fitName);
