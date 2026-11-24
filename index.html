@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Queenie</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=Chakra+Petch:wght@500;600;700&amp;family=Exo+2:wght@400;500;600;700&amp;family=Oxanium:wght@500;600;700&amp;family=Tektur:wght@500;700;800&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700&family=Tektur:wght@500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 /* VOICE quiet, dry, a little deadpan, cyberpunk: a personal page for a nonchalant introvert
    IDEA a late-night HUD: photo prints, a now-playing card and a heart monitor on a scanlined dark grid
@@ -390,7 +390,7 @@ kbd{font:700 13px "Share Tech Mono",monospace;border:1px solid var(--line);borde
 .pp-arr:disabled{opacity:.3;cursor:default;background:#111;color:#fff}
 .pp-rail{display:flex;align-items:flex-start;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:28px calc(-1 * clamp(24px,3.2vw,48px)) 0;padding:0 clamp(24px,3.2vw,48px) 14px;scroll-padding:0 clamp(24px,3.2vw,48px);scrollbar-width:thin;scrollbar-color:#444 transparent}
 .pp-proj{flex:0 0 min(380px,82vw);scroll-snap-align:start;background:#141414;border:1px solid #262626;border-radius:18px;overflow:hidden}
-.pp-projimg{aspect-ratio:16/10;background:#1a1a1a}
+.pp-projimg{aspect-ratio:16/10;background:#1a1a1a;overflow:hidden}
 .pp-projimg img{width:100%;height:100%;object-fit:cover;display:block}
 .pp-projbody{padding:22px 22px 24px}
 .pp-projbody h3{font:800 clamp(22px,2vw,28px)/1 "Inter Tight",sans-serif;letter-spacing:-.025em;text-transform:uppercase;margin:0 0 14px;color:#fff}
@@ -493,26 +493,20 @@ body{counter-reset:sec}
 /* notebook photos + stickers */
 .tld{position:relative}
 .tld::after{content:"";display:block;clear:both}
-.tstk{float:right;width:min(40%,200px);margin:-4px -2px 10px 18px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2}
+.tstk{float:right;width:min(40%,200px);margin:-4px -2px 10px 18px;display:flex;flex-direction:column;align-items:flex-end;position:relative;z-index:2}
 .stk{display:block;width:100%;max-height:230px;object-fit:contain;transform:rotate(var(--r,0deg));transition:transform .2s;filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 12px 14px #000b)}
 .stk:hover{transform:rotate(0deg) scale(1.05)}
 .stk+.stk{margin-top:-14px}
+.cbx{display:block;overflow:hidden}
+.cbx>img{display:block;width:100%}
+.adjframe{position:relative;overflow:hidden;width:min(100%,440px);margin:12px auto;cursor:grab;touch-action:none;border:1px solid var(--line)}
+.adjframe.stkf{width:min(100%,320px);height:300px;display:grid;place-items:center;cursor:default}
+.adjframe img{display:block;width:100%;user-select:none;-webkit-user-drag:none}
+.adjframe.stkf img{width:auto;max-width:100%;max-height:100%;filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff)}
 .tph{display:flex;gap:14px;overflow-x:auto;padding:6px 4px 14px;scrollbar-width:thin}
-.tphb{flex:none;padding:7px 7px 20px;background:#f2f0ea;border:0;border-radius:0;transform:rotate(var(--r,0deg));cursor:zoom-in;box-shadow:0 10px 18px -10px #000c}
+.tphb{flex:none;padding:7px 7px 20px;background:#f2f0ea;transform:rotate(var(--r,0deg));box-shadow:0 10px 18px -10px #000c}
 .tphb img{display:block;height:150px;width:auto;max-width:260px;object-fit:cover}
-.lbx{position:fixed;inset:0;z-index:400;background:#05070bf2;overscroll-behavior:contain}
-.lbx .lbs{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;touch-action:none;cursor:zoom-in}
-.lbx.z .lbs{cursor:grab}.lbx.z.drag .lbs{cursor:grabbing}
-.lbx .lbs img{max-width:92vw;max-height:calc(100vh - 120px);object-fit:contain;transform-origin:50% 50%;user-select:none;-webkit-user-drag:none;transition:transform .12s}
-.lbx.drag .lbs img,.lbx.pinch .lbs img{transition:none}
-.lbx .lbbar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:#0b1018ee;border:1px solid var(--line);padding:6px;font:13px "Share Tech Mono",monospace;color:var(--soft)}
-.lbx .lbbar button,.lbx .lbnav{min-width:44px;min-height:44px;background:transparent;border:1px solid var(--line);color:var(--ink);font:600 18px "Share Tech Mono",monospace;cursor:pointer}
-.lbx .lbbar button:hover,.lbx .lbnav:hover{border-color:var(--cy);color:var(--cy)}
-.lbx .lbbar span{min-width:52px;text-align:center}
-.lbx .lbnav{position:absolute;top:50%;transform:translateY(-50%);background:#0b1018cc}
-.lbx .lbp{left:12px}.lbx .lbn{right:12px}
-.lbx .lbx-x{position:absolute;top:12px;right:12px;min-width:44px;min-height:44px;background:#0b1018cc;border:1px solid var(--line);color:var(--ink);font:18px "Share Tech Mono",monospace;cursor:pointer}
-.zoomable{cursor:zoom-in}
+
 .chk-bg{background:conic-gradient(#2a2f3a 25%,#1a1e26 0 50%,#2a2f3a 0 75%,#1a1e26 0) 0 0/16px 16px}
 .tpgrid{display:flex;flex-wrap:wrap;gap:12px;margin:6px 0 8px}
 .tpi{width:132px;display:flex;flex-direction:column;gap:6px}
@@ -576,9 +570,9 @@ body{counter-reset:sec}
   </section>
   <section class="pp-card pp-split" id="ppAboutCard"><div class="pp-text"><h2>About me</h2><div class="pp-cols" id="ppAbout"></div></div><div class="pp-img" id="ppPhoto"></div></section>
   <section class="pp-card pp-block" id="ppSkillsCard"><h2>Skills</h2><div class="pp-skills" id="ppSkills"></div></section>
-  <section class="pp-card pp-block" id="ppWorkCard"><div class="pp-rowhead"><h2>Research and projects</h2><div class="pp-arrows"><button class="pp-arr" data-dir="-1" aria-label="Previous projects">←</button><button class="pp-arr" data-dir="1" aria-label="More projects">→</button></div></div><div class="pp-rail" id="ppWork"></div></section>
+  <section class="pp-card pp-block" id="ppWorkCard"><div class="pp-rowhead"><h2>Research and projects</h2><div class="pp-arrows"><button class="pp-arr" data-dir="-1" aria-label="Previous projects">&larr;</button><button class="pp-arr" data-dir="1" aria-label="More projects">&rarr;</button></div></div><div class="pp-rail" id="ppWork"></div></section>
   <section class="pp-card pp-block"><h2>Get in touch</h2><div class="pp-contact" id="ppContact"></div></section>
-  <footer class="pp-foot"><span id="secret2" style="user-select:none">© Queenie</span><span id="ppUpd"></span></footer>
+  <footer class="pp-foot"><span id="secret2" style="user-select:none">&copy; Queenie</span><span id="ppUpd"></span></footer>
 </div></div>
 <header class="band" style="padding-bottom:20px">
   <nav class="nav" aria-label="Sections">
@@ -588,10 +582,10 @@ body{counter-reset:sec}
   </nav>
   <div class="hero" id="top">
     <div>
-      <p class="pres" id="pres" hidden=""><i aria-hidden="true"></i><span></span></p>
+      <p class="pres" id="pres" hidden><i aria-hidden="true"></i><span></span></p>
       <p class="hi fall" id="hirow">hi, i'm</p>
       <div class="namerow"><span id="avatar"></span><h1 id="name" class="fall" data-text="Queenie">Queenie</h1></div>
-      <p id="aka" hidden=""></p>
+      <p id="aka" hidden></p>
       <p class="lede fall" id="tagline"></p>
       <div class="tags" id="notes"></div>
       <div class="socials" id="socials"></div>
@@ -601,7 +595,7 @@ body{counter-reset:sec}
       <figure class="print fall c-p1" style="--r:-5deg"><div id="p1"></div><p id="p1cap">golden hour, obviously</p></figure>
       <figure class="print fall c-p2" style="--r:4deg"><div id="p2"></div><p id="p2cap">night walk</p></figure>
       <a class="np fall c-np" style="--r:-2deg" href="#music"><span class="art" aria-hidden="true"></span><span><small>now playing</small><b>a breakup song</b><small>(there was no breakup)</small></span><span class="prog"><span>1:12</span><i></i><span>3:48</span></span></a>
-      <a class="fall c-hr" style="--r:3deg" href="#me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"></path></svg><span><span id="miniBpm">74</span> bpm</span></a>
+      <a class="fall c-hr" style="--r:3deg" href="#me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span><span id="miniBpm">74</span> bpm</span></a>
     </div>
   </div>
 </header>
@@ -675,10 +669,10 @@ body{counter-reset:sec}
     <h2>What I do for fun</h2>
     <p class="sub">in order of how much time they actually take</p>
     <div class="hob">
-      <div class="card fall" style="--r:-1.2deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="13" y="3" width="22" height="42" rx="4"></rect><path d="M19 11h10M19 16h10M19 21h6"></path><path d="M24 27v11M19.5 33.5 24 38l4.5-4.5"></path></svg><h3>Doomscrolling</h3><p>at a professional level</p></div>
-      <div class="card fall" style="--r:1deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="42" height="27" rx="3"></rect><path d="M8 13V9h8v4"></path><circle cx="27" cy="26.5" r="9"></circle><circle cx="27" cy="26.5" r="4"></circle><path d="M8 19h6M38 18h2"></path></svg><h3>Photography</h3><p>always chasing the light</p><span id="igSlot"></span></div>
-      <div class="card fall" style="--r:-.8deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4 35 21 24 44 13 21Z"></path><path d="M24 44V25"></path><circle cx="24" cy="22" r="2.5"></circle><path d="M17 15h14"></path></svg><h3>Writing my book</h3><p>romance, in a fantasy world I made up</p></div>
-      <div class="card fall" style="--r:1.2deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 40l3-10L33 8l7 7-22 22z"></path><path d="M29 12l7 7M11 30l7 7"></path><path d="M26 42h16"></path></svg><h3>Drawing</h3><p>occasionally. emphasis on occasionally</p></div>
+      <div class="card fall" style="--r:-1.2deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="13" y="3" width="22" height="42" rx="4"/><path d="M19 11h10M19 16h10M19 21h6"/><path d="M24 27v11M19.5 33.5 24 38l4.5-4.5"/></svg><h3>Doomscrolling</h3><p>at a professional level</p></div>
+      <div class="card fall" style="--r:1deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="42" height="27" rx="3"/><path d="M8 13V9h8v4"/><circle cx="27" cy="26.5" r="9"/><circle cx="27" cy="26.5" r="4"/><path d="M8 19h6M38 18h2"/></svg><h3>Photography</h3><p>always chasing the light</p><span id="igSlot"></span></div>
+      <div class="card fall" style="--r:-.8deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4 35 21 24 44 13 21Z"/><path d="M24 44V25"/><circle cx="24" cy="22" r="2.5"/><path d="M17 15h14"/></svg><h3>Writing my book</h3><p>romance, in a fantasy world I made up</p></div>
+      <div class="card fall" style="--r:1.2deg"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 40l3-10L33 8l7 7-22 22z"/><path d="M29 12l7 7M11 30l7 7"/><path d="M26 42h16"/></svg><h3>Drawing</h3><p>occasionally. emphasis on occasionally</p></div>
     </div>
     <div class="pics" id="pics"></div>
     <p class="fine" style="text-align:center" id="picsNote">Sample frames for now. My real photos go here soon.</p>
@@ -698,7 +692,7 @@ body{counter-reset:sec}
     <h2>Love songs vs. breakup songs</h2>
     <p class="sub">never been in a relationship. listen to both anyway.</p>
     <div class="music">
-      <svg class="vinyl fall" viewBox="0 0 300 300" aria-hidden="true"><g class="spin"><circle cx="150" cy="150" r="146" fill="#07080b" stroke="#ffffff1c" stroke-width="2"></circle><g id="grooves" fill="none" stroke="#ffffff12"></g><path d="M60 90 A110 110 0 0 1 120 46" fill="none" stroke="#ffffff26" stroke-width="10" stroke-linecap="round"></path><circle cx="150" cy="150" r="52" fill="#ff6b5b" id="label"></circle><text x="150" y="146" text-anchor="middle" font-family="Share Tech Mono,monospace" font-weight="700" font-size="14" fill="#0b0d11" id="side">SIDE A</text><text x="150" y="166" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="#0b0d11">queenie's mix</text></g><circle cx="150" cy="150" r="5" fill="#101217"></circle></svg>
+      <svg class="vinyl fall" viewBox="0 0 300 300" aria-hidden="true"><g class="spin"><circle cx="150" cy="150" r="146" fill="#07080b" stroke="#ffffff1c" stroke-width="2"/><g id="grooves" fill="none" stroke="#ffffff12"></g><path d="M60 90 A110 110 0 0 1 120 46" fill="none" stroke="#ffffff26" stroke-width="10" stroke-linecap="round"/><circle cx="150" cy="150" r="52" fill="#ff6b5b" id="label"/><text x="150" y="146" text-anchor="middle" font-family="Share Tech Mono,monospace" font-weight="700" font-size="14" fill="#0b0d11" id="side">SIDE A</text><text x="150" y="166" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="#0b0d11">queenie's mix</text></g><circle cx="150" cy="150" r="5" fill="#101217"/></svg>
       <div>
         <label for="moodRange" class="ends"><span>in love (theoretically)</span><span>heartbroken (also theoretically)</span></label>
         <input type="range" class="range" id="moodRange" min="0" max="100" value="20">
@@ -709,7 +703,7 @@ body{counter-reset:sec}
         </div>
       </div>
     </div>
-    <div id="plWrap" hidden=""><p class="plhead">// playlists</p><div class="pls" id="pls"></div></div>
+    <div id="plWrap" hidden><p class="plhead">// playlists</p><div class="pls" id="pls"></div></div>
   </div>
 </section>
 
@@ -782,7 +776,7 @@ body{counter-reset:sec}
   </div>
 </footer>
 
-<button id="grav" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v15M5 12l7 7 7-7"></path></svg><span id="gravTxt">gravity: off</span></button>
+<button id="grav" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v15M5 12l7 7 7-7"/></svg><span id="gravTxt">gravity: off</span></button>
 <div id="toast" role="status"></div>
 
 <script type="application/json" id="cfg">{
@@ -1269,6 +1263,9 @@ body{counter-reset:sec}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <script>
 {
+const cropStyle = (z, x, y) => `object-position:${x}% ${y}%;transform:scale(${z});transform-origin:${x}% ${y}%`;
+const cropOf = q => q && q.zoom && q.zoom > 1.001 ? cropStyle(q.zoom, q.x ?? 50, q.y ?? 50) : "";
+const keepCrop = q => { const o = {}; if (q && +q.zoom > 1.001) { o.zoom = Math.round(Math.min(3, +q.zoom) * 100) / 100; o.x = Math.max(0, Math.min(100, Math.round(+q.x || 50))); o.y = Math.max(0, Math.min(100, Math.round(+q.y || 50))); } return o; };
 /* Keep a clean copy of the page so the owner's editor can republish it with new settings. */
 const SRC_HEAD = document.head.innerHTML, SRC_BODY = document.body.innerHTML;
 const ME = JSON.parse(document.getElementById("cfg").textContent);
@@ -1289,12 +1286,11 @@ const scene = (a, b, sun, h1, h2) => { const id = "g" + (sid++); return `<svg vi
 const HP = ME.heroPhotos || [];
 [["#p1", "#p1cap", () => scene("#ffb36b", "#ffe08a", "#fff6d8", "#c06a3c", "#4a2a1c")], ["#p2", "#p2cap", () => scene("#0f1a33", "#3b5a9a", "#e9f0ff", "#26365e", "#0b1222")]].forEach(([el, cap, fallback], i) => {
   const p = HP[i] || {};
-  $(el).innerHTML = p.src ? `<img class="mephoto" src="${esc(p.src)}" alt="${esc(p.caption || "a photo")}">` : fallback();
+  $(el).innerHTML = p.src ? `<span class="cbx"><img class="mephoto" src="${esc(p.src)}" alt="${esc(p.caption || "a photo")}" style="${cropOf(p)}"></span>` : fallback();
   const im = $(el).querySelector("img");
   if (im) { const fit = () => { const r = im.naturalWidth / im.naturalHeight || 1, [base, maxH] = i ? [46, 230] : [60, 300]; $(el).parentElement.style.width = `min(${base}%, ${Math.round(maxH * r)}px)`; }; im.complete ? fit() : im.addEventListener("load", fit); }
   $(cap).textContent = p.caption || "";
 });
-const cropStyle = (z, x, y) => `object-position:${x}% ${y}%;transform:scale(${z});transform-origin:${x}% ${y}%`;
 /* profile photos: a small swipeable set, each with its own crop */
 if (!Array.isArray(ME.profilePics)) ME.profilePics = ME.profilePic ? [{ src: ME.profilePic, zoom: ME.profileZoom || 1, x: ME.profileX ?? 50, y: ME.profileY ?? 50 }] : [];
 const PICS = ME.profilePics.filter(p => p && p.src);
@@ -1321,7 +1317,7 @@ const handStack = f => f === "Queenie Hand" ? `"Queenie Hand","Zeyada","Segoe Sc
 loadFont(HAND === "Queenie Hand" ? "Zeyada" : HAND);
 try { document.documentElement.style.setProperty("--hand", handStack(HAND)); } catch (err) {}
 const pics = [["#9fd3ff","#dfeaf5","#fffbe8","#7fa6d6","#2e4a7a","after the rain"],["#1e2a4a","#d9824a","#ffd27a","#3c4a6e","#141a30","last train home"],["#ffe7a3","#ffb38a","#fff","#e98a6c","#6a2e22","school, but make it art"]];
-if ((ME.gallery || []).length) { $("#pics").innerHTML = ME.gallery.map((p, i) => `<figure class="print fall" style="--r:${[-2, 1.5, -1, 1, -1.5, 2][i % 6]}deg"><img src="${esc(p.src)}" alt="${esc(p.caption || "a photo by Queenie")}"><p>${esc(p.caption || "")}</p></figure>`).join(""); $("#picsNote").hidden = true; if (ME.gallery.length > 1) $("#pics").insertAdjacentHTML("afterend", `<p class="swipehint">swipe for more &rarr;</p>`); }
+if ((ME.gallery || []).length) { $("#pics").innerHTML = ME.gallery.map((p, i) => `<figure class="print fall" style="--r:${[-2, 1.5, -1, 1, -1.5, 2][i % 6]}deg"><span class="cbx"><img src="${esc(p.src)}" alt="${esc(p.caption || "a photo by Queenie")}" style="${cropOf(p)}"></span><p>${esc(p.caption || "")}</p></figure>`).join(""); $("#picsNote").hidden = true; if (ME.gallery.length > 1) $("#pics").insertAdjacentHTML("afterend", `<p class="swipehint">swipe for more &rarr;</p>`); }
 else $("#pics").innerHTML = pics.map((p, i) => `<figure class="print fall" style="--r:${[-2,1.5,-1][i]}deg">${scene(...p.slice(0,5))}<p>${p[5]}</p></figure>`).join("");
 
 /* ---------- hero + player card ---------- */
@@ -1414,7 +1410,7 @@ $("#tl").addEventListener("click", e => {
   const links = (t.links || []).filter(l => l.url);
   const ach = (t.achievements || []).filter(Boolean);
   const tpx = (t.pics || []).filter(q => q && q.src), stks = tpx.filter(q => q.sticker), phs = tpx.filter(q => !q.sticker);
-  if (open) d.innerHTML = (stks.length ? `<div class="tstk">${stks.map((q, k) => `<img class="stk" src="${esc(q.src)}" alt="" style="--r:${[-7, 6, -3, 8][k % 4]}deg">`).join("")}</div>` : "") + `<div class="tsec"><h6>Write-up</h6>${t.details ? paras(t.details) : `<p class="funny">${esc(pickFunny())}</p>`}</div>` + (ach.length ? `<div class="tsec"><h6>Achievements</h6><ul class="ach">${ach.map(a => `<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg>${esc(a)}</li>`).join("")}</ul></div>` : "") + (phs.length ? `<div class="tsec"><h6>Photos</h6><div class="tph">${phs.map((q, k) => `<button type="button" class="tphb" data-ph="${k}" style="--r:${[-2, 1.5, -1, 2][k % 4]}deg" aria-label="Open photo ${k + 1}"><img src="${esc(q.src)}" alt=""></button>`).join("")}</div></div>` : "") + (links.length ? `<div class="tlinks">${links.map(l => `<a class="lnk" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || "Open link")} <span aria-hidden="true">↗</span></a>`).join("")}</div>` : "");
+  if (open) d.innerHTML = (stks.length ? `<div class="tstk">${stks.map((q, k) => `<img class="stk" src="${esc(q.src)}" alt="" style="--r:${[-7, 6, -3, 8][k % 4]}deg;width:${Math.round(100 * (q.size || 1))}%;max-height:${Math.round(230 * (q.size || 1))}px">`).join("")}</div>` : "") + `<div class="tsec"><h6>Write-up</h6>${t.details ? paras(t.details) : `<p class="funny">${esc(pickFunny())}</p>`}</div>` + (ach.length ? `<div class="tsec"><h6>Achievements</h6><ul class="ach">${ach.map(a => `<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg>${esc(a)}</li>`).join("")}</ul></div>` : "") + (phs.length ? `<div class="tsec"><h6>Photos</h6><div class="tph">${phs.map((q, k) => `<div class="tphb" style="--r:${[-2, 1.5, -1, 2][k % 4]}deg"><span class="cbx"><img src="${esc(q.src)}" alt="" style="${cropOf(q)}"></span></div>`).join("")}</div></div>` : "") + (links.length ? `<div class="tlinks">${links.map(l => `<a class="lnk" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || "Open link")} <span aria-hidden="true">↗</span></a>`).join("")}</div>` : "");
   item.classList.toggle("open", open); d.hidden = !open; b.setAttribute("aria-expanded", open);
 });
 
@@ -1630,7 +1626,7 @@ document.addEventListener("click", e => { const b = e.target.closest && e.target
   const work = (ME.timeline || []).filter(t => t.pro !== false);
   $("#ppWork").innerHTML = work.map(t => {
     const lk = (t.links || []).filter(l => l.url);
-    return `<article class="pp-proj">${t.img ? `<div class="pp-projimg"><img src="${esc(t.img)}" alt=""></div>` : ""}<div class="pp-projbody"><span class="pp-when">${esc(t.when)}</span><h3>${esc(t.title)}</h3>${t.details ? `<div class="pp-projtext">${paras(t.details)}</div>` : ""}${lk.length ? `<div class="pp-links">${lk.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || "Open link")}</a>`).join("")}</div>` : ""}</div></article>`;
+    return `<article class="pp-proj">${t.img ? `<div class="pp-projimg"><img src="${esc(t.img)}" alt="" style="${cropOf(t.imgCrop)}"></div>` : ""}<div class="pp-projbody"><span class="pp-when">${esc(t.when)}</span><h3>${esc(t.title)}</h3>${t.details ? `<div class="pp-projtext">${paras(t.details)}</div>` : ""}${lk.length ? `<div class="pp-links">${lk.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || "Open link")}</a>`).join("")}</div>` : ""}</div></article>`;
   }).join("");
   if (!work.length) $("#ppWorkCard").hidden = true;
   const rail = $("#ppWork");
@@ -1742,53 +1738,31 @@ const store = { get: () => { try { return JSON.parse(localStorage.getItem("qk") 
 
 
 
-/* ---------- photo viewer: tap any photo; zoom with + / -, wheel, pinch or double-tap; drag to look around ---------- */
-const ZOOM_SEL = ".tphb img, .stk, .pics .print img, .collage .print img, .car-slide img, .pp-projimg img, .pp-heroimg img";
-const viewer = (list, idx, opener) => {
-  let s = 1, tx = 0, ty = 0, drag = null, pinch = null, moved = false;
-  const ptr = new Map(), lb = document.createElement("div");
-  lb.className = "lbx"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true"); lb.setAttribute("aria-label", "Photo viewer");
-  lb.innerHTML = `<div class="lbs"><img alt=""></div>${list.length > 1 ? `<button type="button" class="lbnav lbp" aria-label="Previous photo">&larr;</button><button type="button" class="lbnav lbn" aria-label="Next photo">&rarr;</button>` : ""}<button type="button" class="lbx-x" aria-label="Close">&times;</button><div class="lbbar"><button type="button" data-z="out" aria-label="Zoom out">&minus;</button><span aria-live="polite">100%</span><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="fit" aria-label="Fit to screen" style="font-size:13px;padding:0 10px">fit</button>${list.length > 1 ? `<span class="lbc">${idx + 1}/${list.length}</span>` : ""}</div>`;
-  const stage = lb.querySelector(".lbs"), im = stage.querySelector("img"), pct = lb.querySelector(".lbbar span");
-  const clampPan = () => { const r = im.getBoundingClientRect(), W = innerWidth, H = innerHeight; const bw = r.width / s, bh = r.height / s, mx = Math.max(0, (bw * s - W) / 2 + 40), my = Math.max(0, (bh * s - H) / 2 + 40); tx = Math.max(-mx, Math.min(mx, tx)); ty = Math.max(-my, Math.min(my, ty)); };
-  const apply = () => { if (s <= 1.001) { s = 1; tx = ty = 0; } else clampPan(); im.style.transform = `translate(${tx}px,${ty}px) scale(${s})`; pct.textContent = Math.round(s * 100) + "%"; lb.classList.toggle("z", s > 1); };
-  const zoomTo = (ns, cx = innerWidth / 2, cy = innerHeight / 2) => { ns = Math.max(1, Math.min(6, ns)); const ox = cx - innerWidth / 2, oy = cy - innerHeight / 2; tx = ox - (ox - tx) * ns / s; ty = oy - (oy - ty) * ns / s; s = ns; apply(); };
-  const show = i => { idx = (i + list.length) % list.length; im.src = list[idx]; s = 1; tx = ty = 0; apply(); const c = lb.querySelector(".lbc"); if (c) c.textContent = `${idx + 1}/${list.length}`; };
-  const close = () => { lb.remove(); document.removeEventListener("keydown", key, true); document.documentElement.style.overflow = ""; if (opener && opener.focus) opener.focus({ preventScroll: true }); };
-  const key = e => { if (e.key === "Escape") { e.stopPropagation(); close(); } else if (e.key === "+" || e.key === "=") zoomTo(s * 1.4); else if (e.key === "-") zoomTo(s / 1.4); else if (e.key === "0") zoomTo(1); else if (e.key === "ArrowRight" && list.length > 1 && s === 1) show(idx + 1); else if (e.key === "ArrowLeft" && list.length > 1 && s === 1) show(idx - 1); };
-  lb.querySelector(".lbbar").addEventListener("click", e => { const b = e.target.closest("[data-z]"); if (!b) return; const z = b.dataset.z; zoomTo(z === "in" ? s * 1.5 : z === "out" ? s / 1.5 : 1); });
-  lb.querySelector(".lbx-x").addEventListener("click", close);
-  if (list.length > 1) { lb.querySelector(".lbp").addEventListener("click", () => show(idx - 1)); lb.querySelector(".lbn").addEventListener("click", () => show(idx + 1)); }
-  stage.addEventListener("wheel", e => { e.preventDefault(); zoomTo(s * Math.exp(-e.deltaY * .0018), e.clientX, e.clientY); }, { passive: false });
-  stage.addEventListener("dblclick", e => zoomTo(s > 1 ? 1 : 2.5, e.clientX, e.clientY));
-  stage.addEventListener("pointerdown", e => { stage.setPointerCapture(e.pointerId); ptr.set(e.pointerId, [e.clientX, e.clientY]); moved = false;
-    if (ptr.size === 2) { const [a, b] = [...ptr.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), s, cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2 }; drag = null; lb.classList.add("pinch"); }
-    else if (ptr.size === 1) drag = { x: e.clientX, y: e.clientY, tx, ty, t: Date.now() }; });
-  stage.addEventListener("pointermove", e => { if (!ptr.has(e.pointerId)) return; ptr.set(e.pointerId, [e.clientX, e.clientY]);
-    if (pinch && ptr.size === 2) { const [a, b] = [...ptr.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); s = pinch.s; zoomTo(pinch.s * d / pinch.d, pinch.cx, pinch.cy); moved = true; return; }
-    if (drag) { const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 6) moved = true; if (s > 1) { tx = drag.tx + dx; ty = drag.ty + dy; lb.classList.add("drag"); apply(); } } });
-  const up = e => { ptr.delete(e.pointerId); lb.classList.remove("drag");
-    if (ptr.size < 2) { if (pinch) lb.classList.remove("pinch"); pinch = null; }
-    if (drag && ptr.size === 0) { const dx = e.clientX - drag.x;
-      if (s === 1 && list.length > 1 && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(e.clientY - drag.y)) show(idx + (dx < 0 ? 1 : -1));
-      else if (!moved && s === 1 && e.target === stage) close();
-      drag = null; } };
-  stage.addEventListener("pointerup", up); stage.addEventListener("pointercancel", up);
-  document.addEventListener("keydown", key, true);
-  document.documentElement.style.overflow = "hidden";
-  document.body.appendChild(lb); show(idx); lb.querySelector(".lbx-x").focus({ preventScroll: true });
+
+/* ---------- adjust a photo's zoom + position (or a sticker's size) inside the editor ---------- */
+const adjustPhoto = (q, how = {}) => {
+  const src = how.src || q.src; if (!src) return;
+  const start = { zoom: q.zoom || 1, x: q.x ?? 50, y: q.y ?? 50, size: q.size || 1 }, st = Object.assign({}, start);
+  const ov = document.createElement("div"); ov.className = "ed";
+  ov.innerHTML = `<div class="edbox" role="dialog" aria-modal="true" aria-labelledby="adjT" style="max-width:560px"><h3 id="adjT">${how.sticker ? "Sticker size" : "Zoom and position"}</h3><div class="adjframe ${how.sticker ? "stkf chk-bg" : ""}" id="adjF" ${how.frame ? `style="aspect-ratio:${how.frame}"` : ""}><img src="${esc(src)}" alt="" draggable="false" ${how.frame ? `style="height:100%;object-fit:cover"` : ""}></div><label for="adjR" style="margin-top:4px">${how.sticker ? "Size" : "Zoom"}</label><input type="range" class="range" id="adjR" min="${how.sticker ? .5 : 1}" max="${how.sticker ? 1.6 : 3}" step="0.05"><p class="fine" style="margin:6px 0 0">${how.sticker ? "How big it sits on the write-up." : "Slide to zoom in, then drag the photo to choose what's in the frame."}</p><div class="edbar"><button type="button" id="adjReset">Reset</button><button type="button" id="adjX">Cancel</button><button type="button" class="save" id="adjOk">Done</button></div></div>`;
+  document.body.appendChild(ov);
+  const F = ov.querySelector("#adjF"), im = F.querySelector("img"), R = ov.querySelector("#adjR");
+  const paint = () => { if (how.sticker) { im.style.width = Math.round(st.size * 60) + "%"; } else { const base = how.frame ? "height:100%;object-fit:cover;" : ""; im.setAttribute("style", base + cropStyle(st.zoom, st.x, st.y)); } R.value = how.sticker ? st.size : st.zoom; };
+  R.addEventListener("input", () => { if (how.sticker) st.size = +R.value; else st.zoom = +R.value; paint(); });
+  let dr = null;
+  if (!how.sticker) {
+    F.addEventListener("pointerdown", e => { e.preventDefault(); F.setPointerCapture(e.pointerId); dr = { x: e.clientX, y: e.clientY, px: st.x, py: st.y, w: F.clientWidth, h: F.clientHeight }; });
+    F.addEventListener("pointermove", e => { if (!dr) return; const k = 1 / Math.max(st.zoom - 1, .12); st.x = Math.max(0, Math.min(100, dr.px - (e.clientX - dr.x) / dr.w * 100 * k)); st.y = Math.max(0, Math.min(100, dr.py - (e.clientY - dr.y) / dr.h * 100 * k)); paint(); });
+    const stop = () => { dr = null; }; F.addEventListener("pointerup", stop); F.addEventListener("pointercancel", stop);
+  }
+  const shut = () => { ov.remove(); document.removeEventListener("keydown", esc_, true); };
+  const esc_ = e => { if (e.key === "Escape") { e.stopPropagation(); shut(); } };
+  document.addEventListener("keydown", esc_, true);
+  ov.querySelector("#adjReset").addEventListener("click", () => { Object.assign(st, { zoom: 1, x: 50, y: 50, size: 1 }); paint(); });
+  ov.querySelector("#adjX").addEventListener("click", shut);
+  ov.querySelector("#adjOk").addEventListener("click", () => { if (how.sticker) q.size = st.size; else { q.zoom = st.zoom; q.x = Math.round(st.x); q.y = Math.round(st.y); } shut(); renderEd(); toast("adjusted. hit save when you're done."); });
+  paint(); R.focus();
 };
-document.addEventListener("click", e => {
-  if (edEl || e.defaultPrevented || e.button) return;
-  const im = e.target.closest(ZOOM_SEL) || (e.target.closest(".tphb") && e.target.closest(".tphb").querySelector("img"));
-  if (!im || !im.src || document.documentElement.classList.contains("grav")) return;
-  const group = im.closest(".pics, .tph, .tstk, .car, .pp-rail, .collage") || im.parentElement;
-  const imgs = [...group.querySelectorAll("img")].filter(x => x.matches(ZOOM_SEL) && x.src);
-  const list = imgs.map(x => x.src), i = Math.max(0, imgs.indexOf(im));
-  e.preventDefault(); viewer(list.length ? list : [im.src], list.length ? i : 0, e.target.closest("button, a, [tabindex]") || null);
-});
-const markZoom = () => document.querySelectorAll(ZOOM_SEL).forEach(x => x.classList.add("zoomable"));
-markZoom(); new MutationObserver(() => markZoom()).observe(document.body, { childList: true, subtree: true });
 
 /* ---------- stickers: cut the background out of a photo ---------- */
 const loadImg = src => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error("image")); im.src = src; });
@@ -1861,7 +1835,7 @@ const makeSticker = async q => {
     box.remove();
     const fin = await touchUp(cv, a, note); if (!fin) return;
     const out = composeSticker(cv, fin); if (!out) { toast("nothing left to stick. try again with less erasing."); return; }
-    q.orig = q.orig || q.src; q.src = out; q.sticker = true; renderEd(); toast("sticker made. hit save when you're done.");
+    q.orig = q.orig || q.src; q.src = out; q.sticker = true; delete q.zoom; delete q.x; delete q.y; renderEd(); toast("sticker made. hit save when you're done.");
   } catch (e) { box.remove(); toast("couldn't cut that one out. try another photo."); }
 };
 
@@ -1941,8 +1915,8 @@ const PANELS = {
     const pick = (key, label) => `<label class="filebtn">${label}<input type="file" accept="image/*,.heic,.heif" data-file="${key}"></label>`;
     const P = D[pkey], sel = P[psel];
     const prof = `<div class="pfl">${P.map((p, i) => `<button type="button" class="pfthumb" data-psel="${i}" aria-pressed="${i === psel}" aria-label="Photo ${i + 1}"><img src="${esc(p.src)}" alt="" style="${cropStyle(p.zoom, p.x, p.y)}"></button>`).join("")}<label class="filebtn pfadd">${P.length ? "Add more" : "Add photos"}<input type="file" accept="image/*,.heic,.heif" multiple data-file="pfp"></label></div>` + (sel ? `<div class="phrow" style="grid-template-columns:180px minmax(0,1fr);margin-top:14px"><div class="crop" id="crop" aria-label="Drag to move the photo"><img src="${esc(sel.src)}" alt="" style="${cropStyle(sel.zoom, sel.x, sel.y)}" draggable="false"></div><div class="cropctl"><b style="font-size:14px">Photo ${psel + 1} of ${P.length}</b><label for="zoomR" style="margin:0">Zoom</label><input type="range" class="range" id="zoomR" min="1" max="3" step="0.05" value="${sel.zoom}"><small>Drag the photo to move it. Zoom in to crop tighter. The first photo shows first.</small><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="ib" data-pmv="-1" aria-label="Move photo earlier" ${psel ? "" : "disabled"}>&larr;</button><button class="ib" data-pmv="1" aria-label="Move photo later" ${psel < P.length - 1 ? "" : "disabled"}>&rarr;</button><button class="ib wide" data-resetcrop>Reset crop</button><button class="ib wide" data-prm>Remove</button></div></div></div>` : `<p class="fine">No photos yet.</p>`);
-    const heroSlots = [0, 1].map(i => { const p = D.heroPhotos[i]; return `<div class="slot"><h5>${i ? "Print 2: the smaller one on the right" : "Print 1: the bigger one on the left"}</h5><div class="phrow">${p.src ? `<img class="phprev" src="${esc(p.src)}" alt="">` : `<div class="phprev">sample picture</div>`}<div>${pick("hero" + i, p.src ? "Change" : "Choose a photo")} ${p.src ? `<button class="ib wide" data-rm="hero${i}">Remove</button>` : ""}<div style="margin-top:10px"><input type="text" value="${esc(p.caption)}" data-hc="${i}" placeholder="Caption" aria-label="Caption for print ${i + 1}"></div></div></div></div>`; }).join("");
-    const gal = `<div>${D.gallery.map((p, i) => `<div class="ler g3"><img class="gthumb" src="${esc(p.src)}" alt=""><input type="text" value="${esc(p.caption)}" data-gc="${i}" placeholder="Caption" aria-label="Caption">${ctl("gallery", i)}</div>`).join("")}<label class="filebtn" style="margin-top:8px">Add photos<input type="file" accept="image/*,.heic,.heif" multiple data-file="gallery"></label></div>`;
+    const heroSlots = [0, 1].map(i => { const p = D.heroPhotos[i]; return `<div class="slot"><h5>${i ? "Print 2: the smaller one on the right" : "Print 1: the bigger one on the left"}</h5><div class="phrow">${p.src ? `<img class="phprev" src="${esc(p.src)}" alt="">` : `<div class="phprev">sample picture</div>`}<div>${pick("hero" + i, p.src ? "Change" : "Choose a photo")} ${p.src ? `<button class="ib wide" data-adj="h${i}">Adjust</button> <button class="ib wide" data-rm="hero${i}">Remove</button>` : ""}<div style="margin-top:10px"><input type="text" value="${esc(p.caption)}" data-hc="${i}" placeholder="Caption" aria-label="Caption for print ${i + 1}"></div></div></div></div>`; }).join("");
+    const gal = `<div>${D.gallery.map((p, i) => `<div class="ler g3"><img class="gthumb" src="${esc(p.src)}" alt=""><input type="text" value="${esc(p.caption)}" data-gc="${i}" placeholder="Caption" aria-label="Caption"><button class="ib" data-adj="g${i}">Adjust</button>${ctl("gallery", i)}</div>`).join("")}<label class="filebtn" style="margin-top:8px">Add photos<input type="file" accept="image/*,.heic,.heif" multiple data-file="gallery"></label></div>`;
     return field("1. Profile pictures", `<div class="pkeys" role="group" aria-label="Which version"><button type="button" class="chip" data-pkey="profilePics" aria-pressed="${pkey === "profilePics"}">Playful version</button><button type="button" class="chip" data-pkey="proPics" aria-pressed="${pkey === "proPics"}">Professional version</button></div><button class="where" data-where="${pkey === "proPics" ? "#ppPhoto" : "#avatar"}">Show me where</button>${prof}`, pkey === "proPics" ? "These only show in About me on the professional version. Until you add some here, it borrows your playful photos." : "Swipeable set next to \"QUEENIE\" on the playful side. The first one is also used in the LinkedIn section. The professional version has its own set (switch above).")
       + field("2. Top photos", `<button class="where" data-where=".collage">Show me where</button>${heroSlots}`, "The two tilted photo prints beside your name. Empty slots show a sample picture.")
       + field("3. Photo gallery", `<button class="where" data-where="#pics">Show me where</button>${gal}`, "The row of prints in the 'What I do for fun' section. These replace the sample frames. Six or fewer looks best.")
@@ -1953,7 +1927,7 @@ const PANELS = {
   card: () => field("Stats", `<div>${D.stats.map((s, i) => `<div class="ler s3"><input type="text" value="${esc(s[0])}" data-st="${i}" data-f="0" aria-label="Stat name"><input type="number" value="${+s[1] || 0}" data-st="${i}" data-f="1" aria-label="Stat value">${ctl("stats", i)}</div>`).join("")}<button class="ib wide" data-addstat style="margin-top:8px">Add a stat</button></div>`, "Name and a number. Over 100 makes the bar overflow.") + field("Special abilities", listEd("abilities", "Add an ability")) + field("Weaknesses", listEd("weaknesses", "Add a weakness")),
   heart: () => field("Scenarios", `<div>${D.triggers.map((t, i) => `<div class="tcard"><div class="hrrow"><input type="text" value="${esc(t.label)}" data-hr="${i}" data-f="label" placeholder="Scenario (e.g. Crush walks past)" aria-label="Scenario"><label class="bpmin"><input type="number" min="40" max="230" value="${+t.bpm || 120}" data-hr="${i}" data-f="bpm" aria-label="Max heart rate"> bpm</label></div><input type="text" value="${esc(t.msg)}" data-hr="${i}" data-f="msg" placeholder="Pop-up message when clicked (optional)" aria-label="Pop-up message"><div class="tcbar">${ctl("triggers", i)}</div></div>`).join("")}<button class="ib wide" data-addhr>Add a scenario</button></div>`, "Each scenario becomes a button under the heart monitor. Clicking it spikes the heart rate up to the max bpm you set (40 to 230)."),
   facts: () => field("Random facts", listEd("facts", "Add a fact"), "The 'Tell me something random' button picks from these."),
-  notebook: () => field("Notes beside the notebook", listEd("sideNotes", "Add a note")) + field("Intro", `<textarea data-k="notebookIntro" rows="2" aria-label="Notebook intro">${esc(D.notebookIntro)}</textarea>`) + field("Timeline", `<div>${D.timeline.map((t, i) => `<div class="tcard"><div class="tcrow"><input type="text" value="${esc(t.when)}" data-tl="${i}" data-f="when" placeholder="When (e.g. Year 2)" aria-label="When"><input type="text" value="${esc(t.title)}" data-tl="${i}" data-f="title" placeholder="Title" aria-label="Title"></div><textarea data-tl="${i}" data-f="details" rows="4" placeholder="Write-up. Leave empty and the site makes a joke instead." aria-label="Write-up">${esc(t.details)}</textarea><div class="tlk"><h6>Achievements (only shows when someone opens this part)</h6>${t.achievements.map((a, j) => `<div class="ler t2"><input type="text" value="${esc(a)}" data-ta="${i}" data-j="${j}" placeholder="e.g. Gold, SSEF 2027" aria-label="Achievement"><button class="ib" data-tad="${i}" data-j="${j}" aria-label="Delete achievement">×</button></div>`).join("")}<button class="ib wide" data-taa="${i}" style="margin-top:6px">Add an achievement</button></div><div class="tlk"><h6>Links (papers, posters, videos...)</h6>${t.links.map((l, j) => `<div class="ler t3"><input type="text" value="${esc(l.label)}" data-tk="${i}" data-j="${j}" data-f="label" placeholder="Label (e.g. Read the paper)" aria-label="Link label"><input type="text" value="${esc(l.url)}" data-tk="${i}" data-j="${j}" data-f="url" placeholder="https://..." aria-label="Link address"><button class="ib" data-tkd="${i}" data-j="${j}" aria-label="Delete link">×</button></div>`).join("")}<button class="ib wide" data-tka="${i}" style="margin-top:6px">Add a link</button></div><div class="tlk"><h6>Photos and stickers (only show when someone opens this part)</h6><div class="tpgrid">${(t.pics || []).map((q, j) => `<div class="tpi"><img class="${q.sticker ? "chk-bg" : ""}" src="${esc(q.src)}" alt="">${q.sticker ? `<span class="tag2">sticker</span>` : ""}<div class="tpb">${q.sticker ? (q.orig ? `<button class="ib" data-stu="${i}" data-j="${j}">Undo sticker</button>` : "") : `<button class="ib" data-stk="${i}" data-j="${j}">Make sticker</button>`}<button class="ib" data-tpm="${i}" data-j="${j}" data-d="-1" aria-label="Move left">←</button><button class="ib" data-tpm="${i}" data-j="${j}" data-d="1" aria-label="Move right">→</button><button class="ib" data-tpr="${i}" data-j="${j}" aria-label="Remove photo">×</button></div></div>`).join("")}</div><label class="filebtn">Add photos<input type="file" accept="image/*,.heic,.heif" multiple data-file="tp${i}"></label><p class="fine" style="margin:8px 0 0">"Make sticker" cuts the background out and sticks it on this write-up. You get a brush to fix the edges before it's done.</p></div><label class="chk" style="margin-top:10px"><input type="checkbox" data-tp="${i}" ${t.pro !== false ? "checked" : ""}> Show on the professional version</label><div class="tlk"><h6>Photo for the professional version (optional)</h6><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${t.img ? `<img class="gthumb" src="${esc(t.img)}" alt="">` : ""}<label class="filebtn">${t.img ? "Change" : "Add a photo"}<input type="file" accept="image/*,.heic,.heif" data-file="tl${i}"></label>${t.img ? `<button class="ib wide" data-rm="tl${i}">Remove</button>` : ""}</div></div><div class="tcbar">${ctl("timeline", i)}</div></div>`).join("")}<button class="ib wide" data-addtl>Add a timeline entry</button></div>`, "Top to bottom = first to last. Each part has a write-up, achievements and links, shown separately. Add links to papers, posters or videos and they show up as buttons when someone opens that part."),
+  notebook: () => field("Notes beside the notebook", listEd("sideNotes", "Add a note")) + field("Intro", `<textarea data-k="notebookIntro" rows="2" aria-label="Notebook intro">${esc(D.notebookIntro)}</textarea>`) + field("Timeline", `<div>${D.timeline.map((t, i) => `<div class="tcard"><div class="tcrow"><input type="text" value="${esc(t.when)}" data-tl="${i}" data-f="when" placeholder="When (e.g. Year 2)" aria-label="When"><input type="text" value="${esc(t.title)}" data-tl="${i}" data-f="title" placeholder="Title" aria-label="Title"></div><textarea data-tl="${i}" data-f="details" rows="4" placeholder="Write-up. Leave empty and the site makes a joke instead." aria-label="Write-up">${esc(t.details)}</textarea><div class="tlk"><h6>Achievements (only shows when someone opens this part)</h6>${t.achievements.map((a, j) => `<div class="ler t2"><input type="text" value="${esc(a)}" data-ta="${i}" data-j="${j}" placeholder="e.g. Gold, SSEF 2027" aria-label="Achievement"><button class="ib" data-tad="${i}" data-j="${j}" aria-label="Delete achievement">×</button></div>`).join("")}<button class="ib wide" data-taa="${i}" style="margin-top:6px">Add an achievement</button></div><div class="tlk"><h6>Links (papers, posters, videos...)</h6>${t.links.map((l, j) => `<div class="ler t3"><input type="text" value="${esc(l.label)}" data-tk="${i}" data-j="${j}" data-f="label" placeholder="Label (e.g. Read the paper)" aria-label="Link label"><input type="text" value="${esc(l.url)}" data-tk="${i}" data-j="${j}" data-f="url" placeholder="https://..." aria-label="Link address"><button class="ib" data-tkd="${i}" data-j="${j}" aria-label="Delete link">×</button></div>`).join("")}<button class="ib wide" data-tka="${i}" style="margin-top:6px">Add a link</button></div><div class="tlk"><h6>Photos and stickers (only show when someone opens this part)</h6><div class="tpgrid">${(t.pics || []).map((q, j) => `<div class="tpi"><span class="cbx ${q.sticker ? "chk-bg" : ""}" style="width:132px;height:132px;border:1px solid var(--line)"><img src="${esc(q.src)}" alt="" style="width:100%;height:100%;object-fit:contain;${q.sticker ? "" : cropOf(q)}"></span>${q.sticker ? `<span class="tag2">sticker</span>` : ""}<div class="tpb"><button class="ib" data-adj="p${i}_${j}">${q.sticker ? "Size" : "Adjust"}</button>${q.sticker ? (q.orig ? `<button class="ib" data-stu="${i}" data-j="${j}">Undo sticker</button>` : "") : `<button class="ib" data-stk="${i}" data-j="${j}">Make sticker</button>`}<button class="ib" data-tpm="${i}" data-j="${j}" data-d="-1" aria-label="Move left">←</button><button class="ib" data-tpm="${i}" data-j="${j}" data-d="1" aria-label="Move right">→</button><button class="ib" data-tpr="${i}" data-j="${j}" aria-label="Remove photo">×</button></div></div>`).join("")}</div><label class="filebtn">Add photos<input type="file" accept="image/*,.heic,.heif" multiple data-file="tp${i}"></label><p class="fine" style="margin:8px 0 0">"Make sticker" cuts the background out and sticks it on this write-up. You get a brush to fix the edges before it's done.</p></div><label class="chk" style="margin-top:10px"><input type="checkbox" data-tp="${i}" ${t.pro !== false ? "checked" : ""}> Show on the professional version</label><div class="tlk"><h6>Photo for the professional version (optional)</h6><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${t.img ? `<img class="gthumb" src="${esc(t.img)}" alt="">` : ""}<label class="filebtn">${t.img ? "Change" : "Add a photo"}<input type="file" accept="image/*,.heic,.heif" data-file="tl${i}"></label>${t.img ? `<button class="ib wide" data-adj="t${i}">Adjust</button> <button class="ib wide" data-rm="tl${i}">Remove</button>` : ""}</div></div><div class="tcbar">${ctl("timeline", i)}</div></div>`).join("")}<button class="ib wide" data-addtl>Add a timeline entry</button></div>`, "Top to bottom = first to last. Each part has a write-up, achievements and links, shown separately. Add links to papers, posters or videos and they show up as buttons when someone opens that part."),
   watch: () => `<div class="ef"><h4>Watchlist</h4><small>Type a show and press Enter. Drag blocks between sections, or use the arrows.</small><div class="wadd"><input type="text" id="wNew" placeholder="Show name" aria-label="New show"><select id="wNewSt" aria-label="Section">${WCOLS.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><button class="ib wide" id="wAddB">Add</button></div><div class="board">${WCOLS.map(([k, l], ci) => { const items = D.watchlist.map((w, i) => [w, i]).filter(([w]) => w.status === k); return `<div class="col" data-col="${k}"><h5>${l}<span>${items.length}</span></h5>${items.map(([w, i]) => `<div class="blk" draggable="true" data-w="${i}"><span class="bt">${esc(w.title)}</span><div class="bb"><button class="ib" data-wm="${i}" data-d="-1" aria-label="Move to ${ci ? WCOLS[ci - 1][1] : ""}" ${ci === 0 ? "disabled" : ""}>←</button><button class="ib" data-wm="${i}" data-d="1" aria-label="Move to ${ci < 2 ? WCOLS[ci + 1][1] : ""}" ${ci === 2 ? "disabled" : ""}>→</button><button class="ib" data-wd="${i}" aria-label="Delete">×</button></div></div>`).join("") || `<p class="fine">nothing here. drop a show in.</p>`}</div>`; }).join("")}</div></div>`,
   music: () => field("Love songs (side A)", listEd("loveSongs", "Song - Artist")) + field("Breakup songs (side B)", listEd("breakupSongs", "Song - Artist")) + field("Playlists", `<button class="where" data-where="#music">Show me where</button><div>${D.playlists.map((x, i) => `<div class="tcard"><div class="tcrow"><input type="text" value="${esc(x.title)}" data-pl="${i}" data-f="title" placeholder="Name (e.g. classical)" aria-label="Playlist name"><input type="text" value="${esc(x.url)}" data-pl="${i}" data-f="url" placeholder="https://open.spotify.com/playlist/..." aria-label="Playlist link"></div><input type="text" value="${esc(x.note)}" data-pl="${i}" data-f="note" placeholder="One line about it (optional)" aria-label="Playlist note"><div class="tcbar">${ctl("playlists", i)}</div></div>`).join("")}<button class="ib wide" data-addpl>Add a playlist</button></div>`, "In Spotify: open the playlist, Share, Copy link to playlist, paste it here. It turns into a player people can press play on. Spotify albums and songs work too; other links show as a button."),
   book: () => field("Book intro", `<button class="where" data-where="#bookIntro">Show me where</button><textarea data-k="bookIntro" rows="6" aria-label="Book intro">${esc(D.bookIntro)}</textarea>`, "The text under \"The book\". Leave a blank line between paragraphs.") + field("Wattpad profile", `<button class="where" data-where="#storiesWrap">Show me where</button>` + txt("wattpad", "https://www.wattpad.com/user/..."), "Shows as a button at the top of the page and above your stories.") + field("Stories on Wattpad", `<div>${D.stories.map((x, i) => `<div class="tcard"><div class="tcrow" style="grid-template-columns:minmax(0,1fr)"><input type="text" value="${esc(x.title)}" data-sto="${i}" data-f="title" placeholder="Story title" aria-label="Story title"><input type="text" value="${esc(x.url)}" data-sto="${i}" data-f="url" placeholder="https://www.wattpad.com/story/..." aria-label="Story link"></div><textarea data-sto="${i}" data-f="blurb" rows="5" placeholder="About it. Leave a blank line between paragraphs." aria-label="Story blurb">${esc(x.blurb)}</textarea><div class="tcbar">${ctl("stories", i)}</div></div>`).join("")}<button class="ib wide" data-addsto>Add a story</button></div>`, "Each one becomes a card linking to the story.") + field("Characters", listEd("cast", "Add a character")) + field("Group chat teaser", `<div>${D.chat.map((m, i) => `<div class="ler c3"><input type="text" value="${esc(m.from)}" data-ch="${i}" data-f="from" placeholder="Who" aria-label="Who"><input type="text" value="${esc(m.text)}" data-ch="${i}" data-f="text" placeholder="Message" aria-label="Message">${ctl("chat", i)}</div>`).join("")}<button class="ib wide" data-addch style="margin-top:8px">Add a message</button></div>`, "Optional. Leave empty and the chat stays locked with everyone 'typing'.")
@@ -1998,13 +1972,13 @@ const closeEd = () => { if (edEl) { edEl.remove(); edEl = null; } FLD = JSON.par
 const clean = c => {
   ["notes", "abilities", "weaknesses", "facts", "loveSongs", "breakupSongs", "cast", "sideNotes", "skills"].forEach(k => c[k] = (c[k] || []).map(s => String(s).trim()).filter(Boolean));
   c.stats = c.stats.filter(s => String(s[0]).trim()).map(s => [String(s[0]).trim(), Math.round(+s[1]) || 0]);
-  c.timeline = c.timeline.filter(t => t.when.trim() || t.title.trim() || t.details.trim()).map(t => ({ when: t.when.trim(), title: t.title.trim(), details: t.details.trim(), pro: t.pro !== false, img: t.img || "", pics: (t.pics || []).filter(q => q && q.src).map(q => ({ src: q.src, sticker: !!q.sticker })), achievements: (t.achievements || []).map(a => String(a).trim()).filter(Boolean), links: (t.links || []).map(l => ({ label: String(l.label || "").trim(), url: String(l.url || "").trim() })).filter(l => l.url) }));
+  c.timeline = c.timeline.filter(t => t.when.trim() || t.title.trim() || t.details.trim()).map(t => ({ when: t.when.trim(), title: t.title.trim(), details: t.details.trim(), pro: t.pro !== false, img: t.img || "", pics: (t.pics || []).filter(q => q && q.src).map(q => q.sticker ? Object.assign({ src: q.src, sticker: true }, +q.size && Math.abs(q.size - 1) > .01 ? { size: Math.round(Math.max(.5, Math.min(1.6, +q.size)) * 100) / 100 } : {}) : Object.assign({ src: q.src, sticker: false }, keepCrop(q))), imgCrop: keepCrop(t.imgCrop), achievements: (t.achievements || []).map(a => String(a).trim()).filter(Boolean), links: (t.links || []).map(l => ({ label: String(l.label || "").trim(), url: String(l.url || "").trim() })).filter(l => l.url) }));
   c.chat = c.chat.filter(m => m.text.trim());
   c.stories = (c.stories || []).filter(x => String(x.title || "").trim()).map(x => ({ title: String(x.title).trim(), url: fixUrl(x.url), blurb: String(x.blurb || "").trim() }));
   c.wattpad = fixUrl(c.wattpad);
-  c.gallery = c.gallery.filter(p => p.src).map(p => ({ src: p.src, caption: String(p.caption || "").trim() }));
+  c.gallery = c.gallery.filter(p => p.src).map(p => Object.assign({ src: p.src, caption: String(p.caption || "").trim() }, keepCrop(p)));
   c.stickies = c.stickies.filter(n => String(n.text).trim()).map(n => ({ text: String(n.text).trim(), color: n.color }));
-  c.heroPhotos = [0, 1].map(i => ({ src: (c.heroPhotos[i] || {}).src || "", caption: String((c.heroPhotos[i] || {}).caption || "").trim() }));
+  c.heroPhotos = [0, 1].map(i => Object.assign({ src: (c.heroPhotos[i] || {}).src || "", caption: String((c.heroPhotos[i] || {}).caption || "").trim() }, keepCrop(c.heroPhotos[i])));
   c.instagrams = c.instagrams.map(a => ({ label: String(a.label || "").trim(), url: String(a.url || "").trim() })).filter(a => a.url);
   c.triggers = c.triggers.filter(t => String(t.label).trim()).map(t => ({ label: String(t.label).trim(), bpm: Math.max(40, Math.min(230, Math.round(+t.bpm) || 120)), msg: String(t.msg || "").trim() }));
   c.watchlist = c.watchlist.filter(w => w.title.trim());
@@ -2085,8 +2059,12 @@ const openEditor = start => {
     else if ("prm" in d) { D[pkey].splice(psel, 1); psel = Math.max(0, Math.min(psel, D[pkey].length - 1)); renderEd(); }
     else if (d.rm) { if (d.rm === "cover") D.proCover = ""; else if (/^tl\d+$/.test(d.rm)) D.timeline[+d.rm.slice(2)].img = ""; else if (d.rm === "profile") D.profilePic = ""; else D.heroPhotos[+d.rm.slice(4)].src = ""; renderEd(); }
     else if (d.where) showWhere(d.where);
+    else if (d.adj) { const m = d.adj.match(/^([ghpt])(\d+)(?:_(\d+))?$/); if (m) { const k = m[1], i = +m[2]; let q, how = {};
+        if (k === "g") q = D.gallery[i]; else if (k === "h") q = D.heroPhotos[i]; else if (k === "p") { q = D.timeline[i].pics[+m[3]]; how.sticker = !!q.sticker; }
+        else { const T = D.timeline[i]; T.imgCrop = T.imgCrop || {}; q = T.imgCrop; how.src = T.img; how.frame = 16 / 10; }
+        adjustPhoto(q, how); } }
     else if (d.stk) makeSticker(D.timeline[+d.stk].pics[+d.j]);
-    else if (d.stu) { const q = D.timeline[+d.stu].pics[+d.j]; q.src = q.orig; q.sticker = false; delete q.orig; renderEd(); }
+    else if (d.stu) { const q = D.timeline[+d.stu].pics[+d.j]; q.src = q.orig; q.sticker = false; delete q.orig; delete q.size; renderEd(); }
     else if (d.tpr) { D.timeline[+d.tpr].pics.splice(+d.j, 1); renderEd(); }
     else if (d.tpm) { const P = D.timeline[+d.tpm].pics, j = +d.j, k = j + +d.d; if (k >= 0 && k < P.length) { [P[j], P[k]] = [P[k], P[j]]; renderEd(); } }
     else if (d.taa) { D.timeline[+d.taa].achievements.push(""); renderEd(`[data-ta="${d.taa}"][data-j="${D.timeline[+d.taa].achievements.length - 1}"]`); }
