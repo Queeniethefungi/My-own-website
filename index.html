@@ -483,6 +483,12 @@ body{counter-reset:sec}
 @media(prefers-reduced-motion:reduce){.gl::before,.gl::after{animation:none}}
 
 /* ---------- phones: same page, re-laid out ---------- */
+.pres{display:inline-flex;align-items:center;gap:9px;margin:0 0 14px;padding:6px 12px;border:1px solid var(--line);background:#0b1018;font:13px "Share Tech Mono",monospace;color:var(--soft)}
+.pres i{width:9px;height:9px;border-radius:50%;background:#59616e;flex:none}
+.pres.on{color:#c9f4ff;border-color:#3ee0ff55}
+.pres.on i{background:var(--cy);animation:presPulse 1.6s ease-in-out infinite}
+@keyframes presPulse{50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.pres.on i{animation:none}}
 .swipehint{display:none;margin:2px 0 0;font:13px "Share Tech Mono",monospace;color:var(--soft)}
 @media(max-width:600px){
 .namerow{flex-direction:column;align-items:flex-start;gap:14px}
@@ -546,6 +552,7 @@ body{counter-reset:sec}
   </nav>
   <div class="hero" id="top">
     <div>
+      <p class="pres" id="pres" hidden><i aria-hidden="true"></i><span></span></p>
       <p class="hi fall" id="hirow">hi, i'm</p>
       <div class="namerow"><span id="avatar"></span><h1 id="name" class="fall" data-text="Queenie">Queenie</h1></div>
       <p id="aka" hidden></p>
@@ -1657,13 +1664,59 @@ let GH = null;
 const b64 = str => { const by = new TextEncoder().encode(str); let bin = ""; for (let i = 0; i < by.length; i += 32768) bin += String.fromCharCode.apply(null, by.subarray(i, i + 32768)); return btoa(bin); };
 const gh = async (path, opts) => { const r = await fetch("https://api.github.com" + path, Object.assign({}, opts, { headers: { Accept: "application/vnd.github+json", Authorization: "Bearer " + GH.token, "Content-Type": "application/json" } })); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(r.status === 401 ? "that key didn't work" : r.status === 403 || r.status === 404 ? "this key can't edit that repository" : (j.message || "GitHub said no")); return j; };
 const GH_SAVER = () => ({ label: "Save to GitHub", note: "Only you can see this. Saving updates your live site (give it about a minute).", done: "saved. refresh in about a minute to see it live.", close: true, run: async (html, cfg) => {
-  const cur = await gh(`/repos/${GH.repo}/contents/index.html?ref=${encodeURIComponent(GH.branch)}`);
-  await gh(`/repos/${GH.repo}/contents/index.html`, { method: "PUT", body: JSON.stringify({ message: "Update my site", content: b64(html), sha: cur.sha, branch: GH.branch }) });
+  const R = `/repos/${GH.repo}/git`, br = encodeURIComponent(GH.branch);
+  const head = await gh(`${R}/ref/heads/${br}`), base = await gh(`${R}/commits/${head.object.sha}`);
+  const blob = await gh(`${R}/blobs`, { method: "POST", body: JSON.stringify({ content: b64(html), encoding: "base64" }) });
+  const tree = await gh(`${R}/trees`, { method: "POST", body: JSON.stringify({ base_tree: base.tree.sha, tree: [{ path: "index.html", mode: "100644", type: "blob", sha: blob.sha }] }) });
+  const commit = await gh(`${R}/commits`, { method: "POST", body: JSON.stringify({ message: "Update my site", tree: tree.sha, parents: [head.object.sha] }) });
+  await gh(`${R}/refs/heads/${br}`, { method: "PATCH", body: JSON.stringify({ sha: commit.sha }) });
   Object.keys(ME).forEach(k => delete ME[k]); Object.assign(ME, cfg);
 } });
 const DL_SAVER = () => ({ label: "Download updated file", note: "Download mode: saving gives you a new index.html to upload to GitHub yourself.", done: "downloaded. upload it to GitHub to update the site.", run: html => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([html], { type: "text/html" })); a.download = "index.html"; document.body.appendChild(a); a.click(); a.remove(); } });
 const guessRepo = () => { const h = location.hostname, m = h.match(/^([^.]+)\.github\.io$/i); if (!m) return ""; const seg = location.pathname.split("/").filter(Boolean)[0]; return seg && !/\.html?$/i.test(seg) ? `${m[1]}/${seg}` : `${m[1]}/${h}`; };
 const store = { get: () => { try { return JSON.parse(localStorage.getItem("qk") || "null"); } catch (e) { return null; } }, set: v => { try { localStorage.setItem("qk", JSON.stringify(v)); } catch (e) {} }, clear: () => { try { localStorage.removeItem("qk"); } catch (e) {} } };
+
+/* ---------- online status: Queenie's own device pings a tiny file on a side branch; visitors read it ---------- */
+const PRES_REPO = guessRepo();
+const presAgo = ms => { const m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + "m"; const h = Math.round(m / 60); if (h < 48) return h + "h"; return Math.round(h / 24) + "d"; };
+const showPres = t => {
+  const el = $("#pres"); if (!el) return;
+  const age = t ? Date.now() - t : Infinity, on = age < 4 * 60000;
+  el.classList.toggle("on", on);
+  el.querySelector("span").textContent = on ? "online now · stalking her own website" : isFinite(age) && age < 14 * 864e5 ? `offline · last seen ${presAgo(age)} ago (probably overcommitting)` : "offline · probably overcommitting somewhere";
+  el.hidden = false;
+};
+const presRead = async () => {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${PRES_REPO}/contents/status.json?ref=status`, { headers: { Accept: "application/vnd.github.raw+json" }, cache: "no-store" });
+    if (r.status === 404) { showPres(0); return; }
+    if (!r.ok) return;
+    const j = await r.json(); showPres(Date.parse(j.t) || 0);
+  } catch (e) {}
+};
+let presSha = null, presBusy = false;
+const presPing = async () => {
+  const k = store.get(); if (!k || !k.token || presBusy || document.hidden) return;
+  presBusy = true;
+  const api = (path, opts) => fetch("https://api.github.com/repos/" + k.repo + path, Object.assign({}, opts, { headers: { Accept: "application/vnd.github+json", Authorization: "Bearer " + k.token, "Content-Type": "application/json" } }));
+  try {
+    if (!presSha) {
+      const r = await api("/contents/status.json?ref=status");
+      if (r.status === 404) {
+        const b = await api("/git/ref/heads/status");
+        if (b.status === 404) { const repo = await (await api("")).json(), h = await (await api("/git/ref/heads/" + encodeURIComponent(repo.default_branch || "main"))).json(); await api("/git/refs", { method: "POST", body: JSON.stringify({ ref: "refs/heads/status", sha: h.object.sha }) }); }
+      } else if (r.ok) presSha = (await r.json()).sha;
+    }
+    const body = { message: "online", branch: "status", content: b64(JSON.stringify({ t: new Date().toISOString() })) };
+    if (presSha) body.sha = presSha;
+    const w = await api("/contents/status.json", { method: "PUT", body: JSON.stringify(body) });
+    if (w.ok) { presSha = (await w.json()).content.sha; showPres(Date.now()); } else if (w.status === 409 || w.status === 422) presSha = null;
+  } catch (e) {} finally { presBusy = false; }
+};
+if (PRES_REPO && ME.showOnline !== false) {
+  presRead(); setInterval(() => { if (!document.hidden) presRead(); }, 120000);
+  if (store.get()) { presPing(); setInterval(presPing, 90000); document.addEventListener("visibilitychange", () => { if (!document.hidden) presPing(); }); }
+}
 const connect = async (token, repo) => { GH = { token, repo: repo.replace(/^https?:\/\/github\.com\//i, "").replace(/\/$/, ""), branch: "main" }; const r = await gh(`/repos/${GH.repo}`); GH.branch = r.default_branch || "main"; };
 const unlock = async () => {
   if (edEl) return;
@@ -1694,7 +1747,7 @@ const field = (lab, inner, hint) => `<div class="ef"><h4>${lab}</h4>${hint ? `<s
 const txt = (k, ph) => `<input type="text" data-k="${k}" value="${esc(D[k])}" placeholder="${esc(ph || "")}" aria-label="${esc(k)}">`;
 const PANELS = {
   pro: () => `<div class="ef"><button class="where" data-where="#ppName">Show me the professional version</button></div>` + field("Headline", txt("proHeadline", "e.g. An aspiring student researcher"), "The line under your name on the professional version, and in the LinkedIn section of the playful one.") + field("About", `<textarea data-k="proAbout" rows="8" aria-label="About">${esc(D.proAbout)}</textarea>`, "Big chunks of text are fine here. Leave a blank line between paragraphs.") + field("Big picture behind your name", `<div class="phrow">${(D.proCover || (D.heroPhotos[0] || {}).src) ? `<img class="phprev" style="aspect-ratio:16/10" src="${esc(D.proCover || D.heroPhotos[0].src)}" alt="">` : `<div class="phprev">none yet</div>`}<div><label class="filebtn">${D.proCover ? "Change" : "Choose a photo"}<input type="file" accept="image/*,.heic,.heif" data-file="cover"></label> ${D.proCover ? `<button class="ib wide" data-rm="cover">Remove</button>` : ""}</div></div>`, "A wide photo works best. If you don't pick one, it uses Top photo print 1 (from the Photos tab).") + field("Skills", listEd("skills", "Add a skill"), "Shows as its own Skills panel on the professional version. It stays hidden until you add one.") + field("Email (optional)", txt("proEmail", "you@example.com"), "Shows under Get in touch.") + `<div class="ef"><label class="chk"><input type="checkbox" data-chk="proShowInstagram" ${D.proShowInstagram ? "checked" : ""}> Show my Instagram accounts on the professional version</label></div>` + `<p class="fine">Which timeline parts appear under "Research and projects" is set in the Notebook tab: tick "Show on the professional version" on each one. They show as cards people can scroll sideways through, with your write-up and links (achievements stay on the playful side).</p>`,
-  basics: () => field("Which version people see first", `<select data-k="startMode" aria-label="Start version"><option value="playful" ${D.startMode !== "professional" ? "selected" : ""}>Playful (this one)</option><option value="professional" ${D.startMode === "professional" ? "selected" : ""}>Professional (black and white)</option></select>`, "Either way, visitors can switch with the button at the top. Share yoursite/#professional or yoursite/#playful to send someone straight to one.") + field("Handwriting font", `<div class="hands" role="radiogroup" aria-label="Handwriting font">${HANDS.map(f => `<button type="button" class="handcard" role="radio" aria-checked="${D.handFont === f}" data-hand="${f}"><span class="handopt" style="font-family:${f === "Queenie Hand" ? `'Queenie Hand','Zeyada'` : `'${f}'`},cursive">I agree that the government's efforts are more important</span><small>${f === "Queenie Hand" ? "Queenie Hand (made from your essay)" : f}</small></button>`).join("")}</div>`, "Pick the one that looks most like you. Used for captions, sticky notes, side notes, facts and jokes.") + field("Tagline", `<textarea data-k="tagline" rows="3" aria-label="Tagline">${esc(D.tagline)}</textarea>`) + field("Tags under the tagline", listEd("notes", "Add a tag")) + `<div class="ef"><label class="chk"><input type="checkbox" data-chk="showFullName" ${D.showFullName ? "checked" : ""}> Show my full name (${esc(D.fullName)}) under "Queenie"</label></div>`,
+  basics: () => field("Which version people see first", `<select data-k="startMode" aria-label="Start version"><option value="playful" ${D.startMode !== "professional" ? "selected" : ""}>Playful (this one)</option><option value="professional" ${D.startMode === "professional" ? "selected" : ""}>Professional (black and white)</option></select>`, "Either way, visitors can switch with the button at the top. Share yoursite/#professional or yoursite/#playful to send someone straight to one.") + field("Handwriting font", `<div class="hands" role="radiogroup" aria-label="Handwriting font">${HANDS.map(f => `<button type="button" class="handcard" role="radio" aria-checked="${D.handFont === f}" data-hand="${f}"><span class="handopt" style="font-family:${f === "Queenie Hand" ? `'Queenie Hand','Zeyada'` : `'${f}'`},cursive">I agree that the government's efforts are more important</span><small>${f === "Queenie Hand" ? "Queenie Hand (made from your essay)" : f}</small></button>`).join("")}</div>`, "Pick the one that looks most like you. Used for captions, sticky notes, side notes, facts and jokes.") + field("Tagline", `<textarea data-k="tagline" rows="3" aria-label="Tagline">${esc(D.tagline)}</textarea>`) + field("Tags under the tagline", listEd("notes", "Add a tag")) + `<div class="ef"><label class="chk"><input type="checkbox" data-chk="showFullName" ${D.showFullName ? "checked" : ""}> Show my full name (${esc(D.fullName)}) under "Queenie"</label></div>` + field("Online status", `<label class="chk"><input type="checkbox" data-chk="showOnline" ${D.showOnline !== false ? "checked" : ""}> Show visitors when I’m on my site</label>`, "Works on your GitHub site, on devices where you ticked “Remember on this device” when unlocking. Visitors see “online now” while you have the page open, and “last seen ...” after. Not shown in the claude.ai preview."),
   photos: () => {
     const pick = (key, label) => `<label class="filebtn">${label}<input type="file" accept="image/*,.heic,.heif" data-file="${key}"></label>`;
     const P = D[pkey], sel = P[psel];
@@ -1771,7 +1824,7 @@ const clean = c => {
   c.playlists = (c.playlists || []).filter(x => String(x.url || "").trim()).map(x => ({ title: String(x.title || "").trim(), url: fixUrl(x.url), note: String(x.note || "").trim() }));
   c.floaters = (c.floaters || []).filter(n => String(n.text || "").trim()).map(n => ({ text: String(n.text).trim(), color: n.color || "blue", sec: n.sec || "me", x: Math.max(0, Math.min(95, Math.round((+n.x || 0) * 10) / 10)), y: Math.round(+n.y || 0), r: Math.round((+n.r || 0) * 10) / 10 }));
   c.profilePic = ""; delete c.profileZoom; delete c.profileX; delete c.profileY;
-  c.profileZoom = Math.max(1, Math.min(3, +c.profileZoom || 1)); c.profileX = Math.max(0, Math.min(100, Math.round(+c.profileX))); c.profileY = Math.max(0, Math.min(100, Math.round(+c.profileY))); if (isNaN(c.profileX)) c.profileX = 50; if (isNaN(c.profileY)) c.profileY = 50; c.proShowInstagram = !!c.proShowInstagram;
+  c.profileZoom = Math.max(1, Math.min(3, +c.profileZoom || 1)); c.profileX = Math.max(0, Math.min(100, Math.round(+c.profileX))); c.profileY = Math.max(0, Math.min(100, Math.round(+c.profileY))); if (isNaN(c.profileX)) c.profileX = 50; if (isNaN(c.profileY)) c.profileY = 50; c.proShowInstagram = !!c.proShowInstagram; c.showOnline = c.showOnline !== false;
   ["tagline", "notebookIntro", "linkedin", "messageLink", "profilePic", "proHeadline", "proAbout", "proEmail", "startMode", "handFont", "bookIntro"].forEach(k => c[k] = String(c[k] || "").trim());
   return c;
 };
